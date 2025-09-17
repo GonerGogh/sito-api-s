@@ -87,16 +87,15 @@
 
      async function listarProfesores() {
     try {
-      const res = await fetch("http://localhost:5005/profesoresL"); // ajusta el puerto y endpoint de tu microservicio de RH
+      const res = await fetch("http://localhost:5005/profesoresGet"); // ajusta el puerto y endpoint de tu microservicio de RH
       const profesores = await res.json();
       const tbody = document.getElementById('profesoresTable');
       tbody.innerHTML = '';
       profesores.forEach(p => {
         tbody.innerHTML += `
           <tr>
-            <td>${p.nombre}</td>
-            <td>${p.num_empleado}</td>
-            <td>${p.puesto}</td>
+            <td>${p.nombreP}</td>
+            <td>${p.matriculaP}</td>
           </tr>`;
       });
     } catch(err) {
@@ -158,23 +157,30 @@
       listarGrupos();
       e.target.reset();
     });
+// Listar Grupos
+async function listarGrupos() {
+    const res = await fetch(`${API_URL}/gruposL`);
+    const grupos = await res.json();
+    const tbody = document.getElementById('gruposTable');
+    tbody.innerHTML = '';
+    grupos.forEach(g => {
+        let profesorInfo = "";
+        // Verifica si la información del profesor es un objeto
+        if (g.profesor_responsable && typeof g.profesor_responsable === 'object') {
+            profesorInfo = `${g.profesor_responsable.nombre} (${g.profesor_responsable.matricula})`;
+        } else {
+            profesorInfo = "Profesor no asignado";
+        }
 
-    // Listar Grupos
-    async function listarGrupos() {
-      const res = await fetch(`${API_URL}/gruposL`);
-      const grupos = await res.json();
-      const tbody = document.getElementById('gruposTable');
-      tbody.innerHTML = '';
-      grupos.forEach(g => {
         tbody.innerHTML += `
-          <tr>
-            <td>${g.nombre_grupo}</td>
-            <td>${g.carrera}</td>
-            <td>${g.profesor_responsable}</td>
-            <td>${g.alumnos.join(', ')}</td>
-          </tr>`;
-      });
-    }
+            <tr>
+                <td>${g.nombre_grupo}</td>
+                <td>${g.carrera}</td>
+                <td>${profesorInfo}</td>
+                <td>${g.alumnos.join(', ')}</td>
+            </tr>`;
+    });
+}
 
     // Agregar Alumno a Grupo
     document.getElementById('formAgregarAlumno').addEventListener('submit', async (e) => {
