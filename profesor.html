@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Profesores - Calificaciones</title>
+    <link rel="stylesheet" href="css/calificaciones.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Portal de Profesores</h1>
+        <h2>Poner Calificaciones</h2>
+
+        <div class="calificaciones-section">
+            <label for="grupoSelect">Grupo:</label>
+            <select id="grupoSelect"></select>
+
+            <label for="alumnoSelect">Alumno:</label>
+            <select id="alumnoSelect"></select>
+
+            <label for="calificacionInput">Calificación:</label>
+            <input type="number" id="calificacionInput" min="0" max="100">
+
+            <button id="btnEnviar">Enviar Calificación</button>
+
+            <div id="mensaje"></div>
+        </div>
+    </div>
+
+    <script src="js/calificaciones.js"></script>
+</body>
+</html>
