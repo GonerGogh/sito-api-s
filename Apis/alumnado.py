@@ -97,8 +97,8 @@ def cambiar_contrasena(matricula):
 
     # Llamar microservicio Auth para cambiar contraseña
     try:
-        r = requests.post(f"{AUTH_URL}/cambiar_contrasena", json={
-            "username": matricula,
+        r = requests.post(f"{AUTH_URL}/cambiarContra", json={
+            "matricula": matricula,
             "new_password": nueva
         })
         if r.status_code != 200:

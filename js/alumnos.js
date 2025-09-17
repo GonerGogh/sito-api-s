@@ -85,30 +85,35 @@ cont.innerHTML = html;
     document.getElementById("seccionGrupos").style.display = "none";
     document.getElementById("seccionPassword").style.display = "block";
   });
+// Cambiar contraseña
+const passwordForm = document.getElementById("passwordForm");
+passwordForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nueva = document.getElementById("newPassword").value;
 
-  // Cambiar contraseña
-  const passwordForm = document.getElementById("passwordForm");
-  passwordForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const nueva = document.getElementById("newPassword").value;
-    try {
-      const res = await fetch(`http://localhost:5004/alumnos/${matricula}/cambiar_contrasena`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nueva_contrasena: nueva })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        document.getElementById("msg").innerText = data.msg;
-        document.getElementById("errMsg").innerText = "";
-      } else {
-        document.getElementById("errMsg").innerText = data.error || "Error desconocido";
-        document.getElementById("msg").innerText = "";
-      }
-    } catch(err) {
-      document.getElementById("errMsg").innerText = `Error: ${err.message}`;
+  // Limpiar mensajes
+  document.getElementById("msg").innerText = "";
+  document.getElementById("errMsg").innerText = "";
+
+  try {
+    const res = await fetch(`http://localhost:5004/alumnos/${matricula}/cambiar_contrasena`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ "nueva_contrasena": nueva })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      document.getElementById("msg").innerText = data.msg;
+    } else {
+      document.getElementById("errMsg").innerText = data.error || "Error desconocido";
     }
-  });
+  } catch(err) {
+    document.getElementById("errMsg").innerText = `Error: ${err.message}`;
+  }
+});
+
 
   // Cerrar sesión
   document.getElementById("logout").addEventListener("click", () => {
