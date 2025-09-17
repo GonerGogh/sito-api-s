@@ -3,15 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Profesores - Calificaciones</title>
+    <title>Portal de Profesores</title>
     <link rel="stylesheet" href="css/calificaciones.css">
 </head>
 <body>
     <div class="container">
         <h1>Portal de Profesores</h1>
-        <h2>Poner Calificaciones</h2>
 
-        <div class="calificaciones-section">
+        <!-- Botones de navegación interna -->
+        <div class="nav-buttons">
+            <button id="btnCalificaciones">Poner Calificaciones</button>
+            <button id="btnCambiarContrasena">Cambiar Contraseña</button>
+        </div>
+
+        <!-- Sección de calificaciones -->
+        <div id="seccionCalificaciones" class="seccion">
+            <h2>Poner Calificaciones</h2>
             <label for="grupoSelect">Grupo:</label>
             <select id="grupoSelect"></select>
 
@@ -24,6 +31,17 @@
             <button id="btnEnviar">Enviar Calificación</button>
 
             <div id="mensaje"></div>
+        </div>
+
+        <!-- Sección de cambio de contraseña -->
+        <div id="seccionContrasena" class="seccion" style="display:none;">
+            <h2>Cambiar Contraseña</h2>
+            <label for="nuevaContrasena">Nueva Contraseña:</label>
+            <input type="password" id="nuevaContrasena">
+
+            <button id="btnCambiar">Cambiar Contraseña</button>
+
+            <div id="mensajeContrasena"></div>
         </div>
     </div>
 
