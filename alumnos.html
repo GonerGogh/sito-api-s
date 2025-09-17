@@ -1,106 +1,103 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Alumno - Portal</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h2, h3 { margin-top: 20px; }
-    #calificaciones ul { list-style: none; padding: 0; }
-    #calificaciones li { margin-bottom: 5px; }
-    form { margin-top: 10px; }
-    label { display: block; margin-bottom: 5px; }
-    input { padding: 5px; margin-bottom: 10px; width: 200px; }
-    button { padding: 5px 10px; margin-top: 5px; }
-    #msg { color: green; }
-    #errMsg { color: red; }
-  </style>
+  <meta charset="UTF-8">
+  <title>Alumno - Portal</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h2, h3 { margin-top: 20px; }
+    #calificaciones ul { list-style: none; padding: 0; }
+    #calificaciones li { margin-bottom: 5px; }
+    form { margin-top: 10px; }
+    label { display: block; margin-bottom: 5px; }
+    input { padding: 5px; margin-bottom: 10px; width: 200px; }
+    button { padding: 5px 10px; margin-top: 5px; }
+    #msg { color: green; }
+    #errMsg { color: red; }
+  </style>
 </head>
 <body>
 
-  <h2>Bienvenido <span id="userName"></span></h2>
+  <h2>Bienvenido <span id="userName"></span></h2>
 
-  <h3>Grupos y Calificaciones</h3>
-  <div id="calificaciones">Cargando...</div>
+  <h3>Grupos y Calificaciones</h3>
+  <div id="calificaciones">Cargando...</div>
 
-  <h3>Cambiar Contraseña</h3>
-  <form id="passwordForm">
-    <label>Nueva contraseña: <input type="password" id="newPassword" required></label>
-    <button type="submit">Cambiar</button>
-  </form>
-  <p id="msg"></p>
-  <p id="errMsg"></p>
+  <h3>Cambiar Contraseña</h3>
+  <form id="passwordForm">
+    <label>Nueva contraseña: <input type="password" id="newPassword" required></label>
+    <button type="submit">Cambiar</button>
+  </form>
+  <p id="msg"></p>
+  <p id="errMsg"></p>
 
-  <button id="logout">Cerrar sesión</button>
+  <button id="logout">Cerrar sesión</button>
 
 <script>
-  // ====== Inicializar dashboard ======
-  function initDashboard() {
-    const token = localStorage.getItem("token");
-    const matricula = localStorage.getItem("matricula");
+ async function initDashboard() {
+  const token = localStorage.getItem("token");
+  const matricula = localStorage.getItem("matricula");
 
-    if (!token || !matricula) {
-      window.location.href = "login.html"; // si no hay sesión, redirige
+  if (!token || !matricula) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  document.getElementById("userName").innerText = matricula;
+  const cont = document.getElementById("calificaciones");
+  cont.innerHTML = "Cargando...";
+
+  try {
+    // Petición 1: Obtener la lista de grupos a los que pertenece el alumno
+    const resGrupos = await fetch(`http://localhost:5004/alumnos/${matricula}/grupo`);
+    const gruposAlumno = await resGrupos.json();
+
+    // Petición 2: Obtener las calificaciones del alumno
+    const resCalificaciones = await fetch(`http://localhost:5004/alumnos/${matricula}/calificaciones`, {
+      headers: { "Authorization": token }
+    });
+    const dataCalificaciones = await resCalificaciones.json();
+    // 💡 Las calificaciones ahora son un objeto, no una lista
+    const calificacionesAlumno = dataCalificaciones.calificaciones || {};
+
+    if (resGrupos.status === 404) {
+      cont.innerHTML = "<p>No estás inscrito en ningún grupo.</p>";
       return;
     }
 
-    document.getElementById("userName").innerText = matricula;
+    let html = "<ul>";
+    gruposAlumno.forEach(grupo => {
+      // 💡 Se accede a la calificación directamente por el nombre del grupo
+      const calificacionObj = calificacionesAlumno[grupo.nombre_grupo];
+      const calificacion = calificacionObj ? calificacionObj.calificacion : "N/A";
+      
+      const profesorNombre = (grupo.profesor_responsable && grupo.profesor_responsable.nombre) ? grupo.profesor_responsable.nombre : 'Sin asignar';
+      const profesorMatricula = (grupo.profesor_responsable && grupo.profesor_responsable.matricula) ? ` (${grupo.profesor_responsable.matricula})` : '';
 
-    // Obtener calificaciones
-    fetch(`http://localhost:5004/alumnos/${matricula}/calificaciones`, {
-      headers: { "Authorization": token }
-    })
-    .then(res => res.json())
-    .then(data => {
-      const cont = document.getElementById("calificaciones");
-      if(data.calificaciones && data.calificaciones.length){
-        let html = "<ul>";
-        data.calificaciones.forEach(c => {
-          html += `<li>Grupo: ${c.grupo} - Calificación: ${c.calificacion} - Profesor: ${c.profesor}</li>`;
-        });
-        html += "</ul>";
-        cont.innerHTML = html;
-      } else {
-        cont.innerHTML = "<p>No hay calificaciones.</p>";
-      }
-    })
-    .catch(()=>{ document.getElementById("calificaciones").innerHTML = "<p>Error al obtener calificaciones.</p>"; });
-
-    // Cambiar contraseña
-    const passwordForm = document.getElementById("passwordForm");
-    passwordForm.addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      const nueva = document.getElementById("newPassword").value;
-      try {
-        const res = await fetch(`http://localhost:5004/alumnos/${matricula}/cambiar_contrasena`, {
-          method: "POST",
-          headers: {"Content-Type":"application/json"},
-          body: JSON.stringify({nueva_contrasena: nueva})
-        });
-        const data = await res.json();
-        if(res.ok){
-          document.getElementById("msg").innerText = data.msg;
-          document.getElementById("errMsg").innerText = "";
-        } else {
-          document.getElementById("errMsg").innerText = data.error || "Error cambiando contraseña";
-          document.getElementById("msg").innerText = "";
-        }
-      } catch(err){
-        document.getElementById("errMsg").innerText = "Servidor no disponible";
-        document.getElementById("msg").innerText = "";
-      }
+      html += `
+        <li>
+          Grupo: ${grupo.nombre_grupo} - 
+          Profesor: ${profesorNombre}${profesorMatricula} - 
+          Calificación: ${calificacion}
+        </li>
+      `;
     });
+    html += "</ul>";
+    cont.innerHTML = html;
 
-    // Logout
-    document.getElementById("logout").addEventListener("click", ()=>{
-      localStorage.removeItem("token");
-      localStorage.removeItem("matricula");
-      window.location.href = "login.html"; // redirige al login
-    });
+  } catch(err) {
+    document.getElementById("calificaciones").innerHTML = `<p>Error al obtener los datos. (${err.message})</p>`;
   }
 
-  // ====== Ejecutar al cargar ======
-  initDashboard();
+
+  // Resto de la función para cambiar contraseña y cerrar sesión
+  const passwordForm = document.getElementById("passwordForm");
+  passwordForm.addEventListener("submit", async (e) => { /* ... */ });
+  document.getElementById("logout").addEventListener("click", () => { /* ... */ });
+}
+
+// Ejecutar al cargar
+initDashboard();
 </script>
 
 </body>

@@ -161,7 +161,24 @@ def listar_profesores():
     profesores = list(db.profesores.find({}, {"_id": 0}))
     return jsonify(profesores), 200 
 
+# 📌 Asignar grupo a profesor
+@app.route("/profesores/asignar_grupo", methods=["POST"])
+def asignar_grupo_a_profesor():
+    data = request.json
+    matricula = data.get("matricula")  # matrícula del profesor
+    grupo = data.get("grupo")
+
+    prof = db.profesores.find_one({"matricula": matricula})
+    if not prof:
+        return jsonify({"error": "Profesor no encontrado"}), 404
+
+    db.profesores.update_one(
+        {"matricula": matricula},
+        {"$push": {"grupos": grupo}}
+    )
+
+    return jsonify({"msg": f"Grupo {grupo} asignado al profesor {matricula}"}), 200
 
 
 if __name__ == "__main__":
-    app.run(port=5004, debug=True)
+    app.run(port=5005, debug=True)
