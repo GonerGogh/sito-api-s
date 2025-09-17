@@ -1,104 +1,45 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Alumno - Portal</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h2, h3 { margin-top: 20px; }
-    #calificaciones ul { list-style: none; padding: 0; }
-    #calificaciones li { margin-bottom: 5px; }
-    form { margin-top: 10px; }
-    label { display: block; margin-bottom: 5px; }
-    input { padding: 5px; margin-bottom: 10px; width: 200px; }
-    button { padding: 5px 10px; margin-top: 5px; }
-    #msg { color: green; }
-    #errMsg { color: red; }
-  </style>
+  <meta charset="UTF-8">
+  <title>Alumno - Portal</title>
+    <link rel="stylesheet" href="css/alumnos.css">
 </head>
 <body>
 
-  <h2>Bienvenido <span id="userName"></span></h2>
+  <!-- Barra de navegación -->
+  <nav class="navbar">
+    <div class="logo">Portal Alumno</div>
+    <ul>
+      <li><a id="linkGrupos">Consultar Grupos</a></li>
+      <li><a id="linkPassword">Cambiar Contraseña</a></li>
+      <li><a id="logout">Cerrar Sesión</a></li>
+    </ul>
+  </nav>
 
-  <h3>Grupos y Calificaciones</h3>
-  <div id="calificaciones">Cargando...</div>
+  <!-- Contenido -->
+  <div class="container">
+    <h2>Bienvenido <span id="userName"></span></h2>
 
-  <h3>Cambiar Contraseña</h3>
-  <form id="passwordForm">
-    <label>Nueva contraseña: <input type="password" id="newPassword" required></label>
-    <button type="submit">Cambiar</button>
-  </form>
-  <p id="msg"></p>
-  <p id="errMsg"></p>
+    <div id="seccionGrupos">
+      <h3>Grupos y Calificaciones</h3>
+      <div id="calificaciones">Cargando...</div>
+    </div>
 
-  <button id="logout">Cerrar sesión</button>
+    <div id="seccionPassword" style="display:none;">
+      <h3>Cambiar Contraseña</h3>
+      <form id="passwordForm">
+        <label>Nueva contraseña: 
+          <input type="password" id="newPassword" required>
+        </label>
+        <button type="submit">Cambiar</button>
+      </form>
+      <p id="msg"></p>
+      <p id="errMsg"></p>
+    </div>
+  </div>
+        <script src="js/alumnos.js"></script>
 
-<script>
- async function initDashboard() {
-  const token = localStorage.getItem("token");
-  const matricula = localStorage.getItem("matricula");
-
-  if (!token || !matricula) {
-    window.location.href = "login.html";
-    return;
-  }
-
-  document.getElementById("userName").innerText = matricula;
-  const cont = document.getElementById("calificaciones");
-  cont.innerHTML = "Cargando...";
-
-  try {
-    // Petición 1: Obtener la lista de grupos a los que pertenece el alumno
-    const resGrupos = await fetch(`http://localhost:5004/alumnos/${matricula}/grupo`);
-    const gruposAlumno = await resGrupos.json();
-
-    // Petición 2: Obtener las calificaciones del alumno
-    const resCalificaciones = await fetch(`http://localhost:5004/alumnos/${matricula}/calificaciones`, {
-      headers: { "Authorization": token }
-    });
-    const dataCalificaciones = await resCalificaciones.json();
-    // 💡 Las calificaciones ahora son un objeto, no una lista
-    const calificacionesAlumno = dataCalificaciones.calificaciones || {};
-
-    if (resGrupos.status === 404) {
-      cont.innerHTML = "<p>No estás inscrito en ningún grupo.</p>";
-      return;
-    }
-
-    let html = "<ul>";
-    gruposAlumno.forEach(grupo => {
-      // 💡 Se accede a la calificación directamente por el nombre del grupo
-      const calificacionObj = calificacionesAlumno[grupo.nombre_grupo];
-      const calificacion = calificacionObj ? calificacionObj.calificacion : "N/A";
-      
-      const profesorNombre = (grupo.profesor_responsable && grupo.profesor_responsable.nombre) ? grupo.profesor_responsable.nombre : 'Sin asignar';
-      const profesorMatricula = (grupo.profesor_responsable && grupo.profesor_responsable.matricula) ? ` (${grupo.profesor_responsable.matricula})` : '';
-
-      html += `
-        <li>
-          Grupo: ${grupo.nombre_grupo} - 
-          Profesor: ${profesorNombre}${profesorMatricula} - 
-          Calificación: ${calificacion}
-        </li>
-      `;
-    });
-    html += "</ul>";
-    cont.innerHTML = html;
-
-  } catch(err) {
-    document.getElementById("calificaciones").innerHTML = `<p>Error al obtener los datos. (${err.message})</p>`;
-  }
-
-
-  // Resto de la función para cambiar contraseña y cerrar sesión
-  const passwordForm = document.getElementById("passwordForm");
-  passwordForm.addEventListener("submit", async (e) => { /* ... */ });
-  document.getElementById("logout").addEventListener("click", () => { /* ... */ });
-}
-
-// Ejecutar al cargar
-initDashboard();
-</script>
 
 </body>
 </html>

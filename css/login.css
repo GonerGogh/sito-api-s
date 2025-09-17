@@ -1,216 +1,104 @@
-/* styles.css - Estilos para Login SITO */
-
-/* Variables CSS para mantener consistencia */
-:root {
-  /* Paleta de colores principal */
-  --primary-color: #3498db;
-  --primary-dark: #2980b9;
-  --secondary-color: #2c3e50;
-  --accent-color: #e74c3c;
-  --light-color: #ecf0f1;
-  --success-color: #27ae60;
-  --warning-color: #f39c12;
-  
-  /* Colores neutrales */
-  --text-color: #333;
-  --text-light: #777;
-  --border-color: #ddd;
-  --bg-color: #f8f9fa;
-  
-  /* Tipografía */
-  --font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.25rem;
-  --font-size-sm: 0.875rem;
-  --font-weight-normal: 400;
-  --font-weight-bold: 600;
-  
-  /* Espaciado y bordes */
-  --border-radius: 8px;
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  
-  /* Sombras */
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+body.login-body {
+    font-family: Arial, sans-serif;
+    background: url('https://via.placeholder.com/1920x1080/007bff/ffffff?text=Fondo+UTL+Estudiantes') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
 }
 
-/* Reset y estilos base */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+.login-container {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    text-align: center;
+    width: 350px;
+    max-width: 90%;
 }
 
-body {
-  font-family: var(--font-family);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-normal);
-  line-height: 1.6;
-  color: var(--text-color);
-  background-color: var(--bg-color);
+.login-container .logo-login img {
+    height: 60px;
+    margin-bottom: 20px;
 }
 
-/* Contenedor principal */
-.bg-light {
-  background-color: var(--bg-color) !important;
+.login-container h3 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #333;
 }
 
-/* Tarjeta de login */
-.card {
-  border: none;
-  border-radius: var(--border-radius);
-  background-color: white;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.login-container form {
+    margin-top: 20px;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg) !important;
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
 }
 
-.shadow-lg {
-  box-shadow: var(--shadow-md) !important;
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #00508C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-/* Encabezado */
-h3 {
-  color: var(--secondary-color);
-  font-weight: var(--font-weight-bold);
-  margin-bottom: var(--spacing-lg);
-  font-size: 1.5rem;
+.login-container button:hover {
+    background-color: #003a6b;
 }
 
-/* Formularios */
-.form-label {
-  font-weight: var(--font-weight-bold);
-  color: var(--secondary-color);
-  margin-bottom: var(--spacing-sm);
-  font-size: var(--font-size-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.login-container .links {
+    margin-top: 20px;
 }
 
-.form-control {
-  padding: var(--spacing-md);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  font-size: var(--font-size-base);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+.login-container .links a {
+    display: block;
+    color: #007bff;
+    margin-bottom: 8px;
+    font-size: 0.9em;
 }
 
-.form-control:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
-  outline: none;
+.login-container .footer-links {
+    margin-top: 30px;
+    font-size: 0.8em;
+    color: #666;
 }
 
-/* Botones */
-.btn {
-  padding: var(--spacing-md) var(--spacing-lg);
-  border-radius: var(--border-radius);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
-  border: none;
-  cursor: pointer;
+.login-container .footer-links p {
+    margin: 5px 0 0 0;
 }
 
-.btn-primary {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
+/* Estilos de los mensajes de alerta */
+#msg .alert {
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 15px;
+    font-weight: bold;
+    text-align: center;
 }
 
-.btn-primary:hover, 
-.btn-primary:focus {
-  background-color: var(--primary-dark);
-  border-color: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+#msg .alert.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
 }
 
-/* Alertas */
-.alert {
-  padding: var(--spacing-md);
-  border-radius: var(--border-radius);
-  margin-bottom: var(--spacing-md);
-  font-weight: var(--font-weight-bold);
-}
-
-.alert-success {
-  background-color: rgba(39, 174, 96, 0.1);
-  color: var(--success-color);
-  border: 1px solid rgba(39, 174, 96, 0.2);
-}
-
-.alert-danger {
-  background-color: rgba(231, 76, 60, 0.1);
-  color: var(--accent-color);
-  border: 1px solid rgba(231, 76, 60, 0.2);
-}
-
-/* Utilidades de texto */
-.text-center {
-  text-align: center;
-}
-
-/* Animaciones */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.card {
-  animation: fadeIn 0.5s ease-out;
-}
-
-/* Responsividad */
-@media (max-width: 576px) {
-  .card {
-    width: 90% !important;
-    margin: 0 auto;
-  }
-  
-  body {
-    padding: var(--spacing-md);
-  }
-}
-
-/* Estados de carga */
-.btn-loading {
-  position: relative;
-  color: transparent;
-}
-
-.btn-loading::after {
-  content: "";
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  top: 50%;
-  left: 50%;
-  margin: -10px 0 0 -10px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top-color: white;
-  animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+#msg .alert.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
 }
