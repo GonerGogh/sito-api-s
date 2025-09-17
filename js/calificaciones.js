@@ -145,3 +145,12 @@ btnCambiar.addEventListener('click', async () => {
         mensajeContrasenaDiv.style.color = 'red';
     }
 });
+
+const btnCerrarSesion = document.getElementById('btnCerrarSesion');
+
+btnCerrarSesion.addEventListener('click', () => {
+    // Limpiar localStorage
+    localStorage.clear();
+    // Redirigir a login
+    window.location.href = 'login.html';
+});
