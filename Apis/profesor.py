@@ -56,15 +56,33 @@ def subir_calificacion(matriculaP):
 def cambiar_contrasena(matriculaP):
     data = request.json
     nueva = data.get("nueva_contrasena")
+    print("Datos recibidos en Alumnos:", data)
 
-    profesor = profesores.find_one({"matriculaP": matriculaP})
-    if not profesor:
-        return jsonify({"error": "Profesor no encontrado"}), 404
+    if not nueva:
+        return jsonify({"error": "Se requiere nueva_contrasena"}), 400
 
-    hashed_pw = generate_password_hash(nueva)
-    profesores.update_one({"matriculaP": matriculaP}, {"$set": {"password": hashed_pw}})
+    try:
+        r = requests.post(
+            f"{AUTH_URL}/cambiarContra",
+            json={                   # <-- así se pasa correctamente
+                "matricula": matricula,
+                "new_password": nueva
+            },
+            timeout=5
+        )
+        print("Payload enviado a Auth:", {"matricula": matricula, "new_password": nueva})
+        print("Respuesta de Auth:", r.text)
 
-    return jsonify({"msg": f"Contraseña cambiada para {matriculaP}"}), 200
+        # Reenvía la respuesta de Auth tal cual
+        try:
+            resp_json = r.json()
+        except ValueError:
+            resp_json = {"error": "Auth respondió sin JSON", "content": r.text}
+
+        return jsonify(resp_json), r.status_code
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": "Error comunicándose con Auth", "detalle": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(port=5005, debug=True)
