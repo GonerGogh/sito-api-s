@@ -14,7 +14,7 @@ profesores = db["profesores"]
 
 # URL microservicio Alumnado
 ALUMNADO_URL = "http://localhost:5004"
-
+AUTH_URL = "http://localhost:5002"  # cambia el puerto si tu Auth usa otro
 # 📌 Listar profesores
 @app.route("/profesoresL", methods=["GET"])
 def listar_profesores():
