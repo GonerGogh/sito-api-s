@@ -58,24 +58,71 @@ def listar_alumnos():
 def registrar_grupo():
     data = request.json
     nombre = data.get("nombre_grupo")
+    profesor = data.get("profesor_responsable")
 
     if db.grupos.find_one({"nombre_grupo": nombre}):
         return jsonify({"error": "Grupo ya existe"}), 400
 
+    # Insertar grupo en DB
     db.grupos.insert_one({
         "nombre_grupo": data["nombre_grupo"],
         "carrera": data["carrera"],
-        "profesor_responsable": data["profesor_responsable"],
+        "profesor_responsable": profesor,
         "alumnos": []
     })
-    return jsonify({"msg": "Grupo registrado con éxito"}), 201
 
-# 📌 Listar grupos
+    # 🔗 Asociar grupo al profesor en RH
+    try:
+        r = requests.post("http://localhost:5005/profesores/asignar_grupo", json={
+            "profesor": profesor,
+            "grupo": nombre
+        })
+        if r.status_code != 200:
+            return jsonify({
+                "msg": "Grupo creado, pero no se pudo asignar al profesor",
+                "detalle": r.json()
+            }), 207  # Multi-Status: parte exitosa, parte fallida
+    except Exception as e:
+        return jsonify({
+            "msg": "Grupo creado, pero error comunicándose con RH",
+            "detalle": str(e)
+        }), 207
+
+    return jsonify({"msg": "Grupo registrado con éxito y asignado al profesor"}), 201
+# ... (código anterior)
+# ... (código anterior)
+
+# ... (código anterior)
+
+# 📌 Listar grupos con nombre y matrícula del profesor
 @app.route("/gruposL", methods=["GET"])
 def listar_grupos():
     grupos = list(db.grupos.find({}, {"_id": 0}))
+
+    # Llamamos al microservicio de RH para obtener todos los profesores
+    try:
+        res = requests.get("http://localhost:5005/profesoresGet")
+        if res.status_code == 200:
+            profesores = res.json()  # lista de dicts con {matriculaP, nombreP, ...}
+            # Crea un mapa que asocia la matrícula con un diccionario que contiene el nombre y la matrícula
+            mapa_profes = {p["matriculaP"]: {"nombre": p["nombreP"], "matricula": p["matriculaP"]} for p in profesores}
+
+            # Reemplazar la matrícula por un objeto con nombre y matrícula en cada grupo
+            for g in grupos:
+                matricula = g.get("profesor_responsable")
+                if matricula in mapa_profes:
+                    g["profesor_responsable"] = mapa_profes[matricula]
+                else:
+                    g["profesor_responsable"] = {"nombre": "Profesor no encontrado", "matricula": matricula}
+    except Exception as e:
+        # Si falla RH, dejamos solo la matrícula
+        print("Error comunicando con RH:", e)
+
     return jsonify(grupos), 200
 
+# ... (código restante)
+# ... (código restante)
+# ... (código restante)
 # 📌 Agregar alumno a grupo
 @app.route("/grupos/<nombre_grupo>/agregar", methods=["POST"])
 def agregar_alumno_a_grupo(nombre_grupo):
@@ -107,5 +154,6 @@ def listar_profesores():
             return jsonify({"error": "No se pudieron obtener los profesores"}), res.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     app.run(port=5003, debug=True)
