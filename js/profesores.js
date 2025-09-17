@@ -108,7 +108,7 @@ async function loadProfesores() {
       let profesores = await response.json();
       console.log("Datos recibidos de la API: ", profesores);
 
-      // 🔧 Normalizar: si no es un array, convertir a array
+      //  convertir a array
       if (!Array.isArray(profesores)) {
         profesores = Object.values(profesores);
       }
