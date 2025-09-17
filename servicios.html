@@ -84,9 +84,9 @@
       matricula: data.matricula,  // O default "12345"
       carrera: data.carrera
     };
-          console.log("Datos enviados a /alumnos:", alumnoData);
+          console.log("Datos enviados a /alumnosR:", alumnoData);
 
-      const res = await fetch(`${API_URL}/alumnos`, {
+      const res = await fetch(`${API_URL}/alumnosR`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(alumnoData)
@@ -99,7 +99,7 @@
 
     // Listar Alumnos
     async function listarAlumnos() {
-      const res = await fetch(`${API_URL}/alumnos`);
+      const res = await fetch(`${API_URL}/alumnosL`);
       const alumnos = await res.json();
       const tbody = document.getElementById('alumnosTable');
       tbody.innerHTML = '';
@@ -117,7 +117,7 @@
     document.getElementById('formGrupo').addEventListener('submit', async (e) => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(e.target));
-      const res = await fetch(`${API_URL}/grupos`, {
+      const res = await fetch(`${API_URL}/gruposR`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -130,7 +130,7 @@
 
     // Listar Grupos
     async function listarGrupos() {
-      const res = await fetch(`${API_URL}/grupos`);
+      const res = await fetch(`${API_URL}/gruposL`);
       const grupos = await res.json();
       const tbody = document.getElementById('gruposTable');
       tbody.innerHTML = '';
