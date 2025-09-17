@@ -26,7 +26,7 @@ def register():
     print("Login attempt:", username, password)  # 🔹 debug
 
     if users.find_one({"username": username}):
-        print("User from DB:", user)  # 🔹 debug
+        print("User from DB:", username)  # 🔹 debug
         return jsonify({"error": "Usuario ya existe"}), 400
 
     hashed_pw = generate_password_hash(password)
@@ -95,6 +95,17 @@ def change_password():
     )
 
     return jsonify({"msg": "Contraseña actualizada correctamente"}), 200
+
+@app.route("/users/<username>", methods=["DELETE"])
+def delete_user(username):
+    try:
+        result = users.delete_one({"username": username})
+        if result.deleted_count == 0:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+        
+        return jsonify({"msg": "Usuario eliminado"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(port=5002, debug=True)
