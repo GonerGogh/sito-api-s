@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Profesores</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/globla.css">
+    <link rel="stylesheet" href="css/profesores.css">
+</head>
+
+<body class="bg-light">
+    <div class="container container-md" style="margin-top: 3rem; margin-bottom: 3rem;"> <!-- Header Principal -->
+        <header class="text-center mb-6">
+            <h1 class="text-3xl text-primary mb-2" style="font-weight: var(--font-weight-bold);"> Sistema de Gestión
+            </h1>
+            <p class="text-secondary text-lg">Administración de Profesores</p>
+        </header> <!-- Card Principal -->
+        <div class="card shadow-lg"> <!-- Header del Card -->
+            <div class="card-header">
+                <h2 class="text-xl text-center" style="margin: 0; font-weight: var(--font-weight-semibold);"> Gestión de
+                    Profesores </h2>
+            </div>
+            <div class="card-body"> <!-- Contenedor de Alertas -->
+                <div id="alert-container" class="mb-4"></div> <!-- Navegación por Pestañas -->
+                <nav class="nav-tabs" role="tablist"> <button class="nav-tab active" id="tab-registrar"
+                        onclick="showSection('registrar')" type="button" role="tab"> <span>📝</span> Registrar </button>
+                    <button class="nav-tab" id="tab-eliminar" onclick="showSection('eliminar')" type="button"
+                        role="tab"> <span>🗑️</span> Eliminar </button> <button class="nav-tab" id="tab-lista"
+                        onclick="loadProfesores(),showSection('lista')" type="button" role="tab"> <span>📋</span> Ver Lista </button> </nav>
+                <!-- Sección Registrar -->
+                <section id="section-registrar" class="tab-content">
+                    <div class="mb-4">
+                        <h3 class="text-lg mb-2"
+                            style="font-weight: var(--font-weight-semibold); color: var(--text-primary);"> Nuevo
+                            Profesor </h3>
+                        <p class="text-secondary text-sm">Complete los datos del profesor que desea registrar</p>
+                    </div>
+                    <form id="registerForm" onsubmit="registrarProfesor(event)" novalidate>
+                        <div class="form-group"> <label for="nombre" class="form-label"> <span>👤</span> Nombre Completo
+                                del Profesor </label> <input type="text" id="nombre" class="form-control"
+                                placeholder="Ej. Dr. Juan Carlos Pérez López" required autocomplete="name"> </div>
+                        <div class="form-group"> <label for="matricula" class="form-label"> <span>🆔</span> Matrícula
+                                del Profesor </label> <input type="text" id="matricula" class="form-control"
+                                placeholder="Ej. P12345" required pattern="^P\d{5}$"
+                                title="La matrícula debe comenzar con P seguido de 5 dígitos" autocomplete="off"> </div>
+                        <div class="text-center mt-6"> <button type="submit" id="registerBtn"
+                                class="btn btn-primary btn-lg btn-block"> <span id="registerBtnText">Registrar
+                                    Profesor</span> </button> </div>
+                    </form>
+                </section> <!-- Sección Eliminar -->
+                <section id="section-eliminar" class="tab-content d-none">
+                    <div class="mb-4">
+                        <h3 class="text-lg mb-2"
+                            style="font-weight: var(--font-weight-semibold); color: var(--danger-color);"> Eliminar
+                            Profesor </h3>
+                        <p class="text-secondary text-sm"> ⚠️ Esta acción no se puede deshacer. Ingrese la matrícula del
+                            profesor a eliminar. </p>
+                    </div>
+                    <form id="deleteForm" onsubmit="eliminarProfesor(event)" novalidate>
+                        <div class="form-group"> <label for="matriculaDel" class="form-label"> <span>🆔</span> Matrícula
+                                del Profesor a Eliminar </label> <input type="text" id="matriculaDel"
+                                class="form-control" placeholder="Ej. P12345" required pattern="^P\d{5}$"
+                                title="La matrícula debe comenzar con P seguido de 5 dígitos" autocomplete="off"> </div>
+                        <div class="text-center mt-6"> <button type="submit" id="deleteBtn"
+                                class="btn btn-danger btn-lg btn-block"> <span id="deleteBtnText">🗑️ Eliminar
+                                    Profesor</span> </button> </div>
+                    </form>
+                </section> <!-- Sección Lista -->
+                <section id="section-lista" class="tab-content d-none">
+                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="text-lg mb-1"
+                                style="font-weight: var(--font-weight-semibold); color: var(--text-primary);">
+                                Profesores Registrados </h3>
+                            <p class="text-secondary text-sm" id="profesoresCount">Lista completa de profesores en el
+                                sistema</p>
+                        </div> <button type="button" class="btn btn-outline-primary btn-sm" onclick="loadProfesores()"
+                            title="Actualizar lista"> 🔄 Actualizar </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60%;"> <span>👤</span> Nombre del Profesor </th>
+                                    <th style="width: 40%;"> <span>🆔</span> Matrícula </th>
+                                </tr>
+                            </thead>
+                            <tbody id="profesoresTable">
+                                <tr>
+                                    <td colspan="2" class="text-center text-muted" style="padding: 3rem;">
+                                        <div> <span style="font-size: 2rem; opacity: 0.5;">📋</span>
+                                            <p class="mt-2">Cargando profesores...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div> <!-- Footer -->
+        <footer class="text-center mt-6">
+            <p class="text-muted text-sm"> © 2024 Sistema de Gestión Académica </p>
+        </footer>
+    </div>
+    <script src="js/profesores.js"></script>
+
+</html>
