@@ -48,10 +48,11 @@
         // Guardar token en localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
+        localStorage.setItem("matricula", username); // <-- esto es clave para el dashboard
 
         // Redirigir según rol
         if (data.role === "alumno") {
-          window.location.href = "alumno.html";
+          window.location.href = "alumnos.html";
         } else if (data.role === "profesor") {
           window.location.href = "profesor.html";
         } else if (data.role === "rh") {
