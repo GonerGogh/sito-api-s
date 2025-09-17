@@ -72,5 +72,12 @@ def eliminar_profesor():
 
     return jsonify({"msg": "Profesor eliminado de Auth y DB"}), 200
 
+@app.route("/profesoresGet", methods=["GET"])
+def listar_profesores():
+    profesores = list(db.profesores.find({}, {"_id": 0}))
+    return jsonify(profesores), 200 
+
+
+
 if __name__ == "__main__":
     app.run(port=5004, debug=True)
