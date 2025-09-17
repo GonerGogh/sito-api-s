@@ -14,6 +14,7 @@ profesores = db["profesores"]
 
 # URL microservicio Alumnado
 ALUMNADO_URL = "http://localhost:5004"
+AUTH_URL = "http://localhost:5002"  # cambia el puerto si tu Auth usa otro
 
 # 📌 Listar profesores
 @app.route("/profesoresL", methods=["GET"])
@@ -65,12 +66,12 @@ def cambiar_contrasena(matriculaP):
         r = requests.post(
             f"{AUTH_URL}/cambiarContra",
             json={                   # <-- así se pasa correctamente
-                "matricula": matricula,
+                "matricula": matriculaP,
                 "new_password": nueva
             },
             timeout=5
         )
-        print("Payload enviado a Auth:", {"matricula": matricula, "new_password": nueva})
+        print("Payload enviado a Auth:", {"matricula": matriculaP, "new_password": nueva})
         print("Respuesta de Auth:", r.text)
 
         # Reenvía la respuesta de Auth tal cual
