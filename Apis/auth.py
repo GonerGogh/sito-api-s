@@ -23,8 +23,10 @@ def register():
     username = data.get("username")
     password = data.get("password")
     role = data.get("role") 
+    print("Login attempt:", username, password)  # 🔹 debug
 
     if users.find_one({"username": username}):
+        print("User from DB:", user)  # 🔹 debug
         return jsonify({"error": "Usuario ya existe"}), 400
 
     hashed_pw = generate_password_hash(password)

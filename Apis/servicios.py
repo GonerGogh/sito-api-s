@@ -26,6 +26,8 @@ def registrar_alumno():
     }
     try:
         r = requests.post(f"{AUTH_URL}/register", json=user_payload)
+        print(r.status_code, r.text)
+
         if r.status_code != 201:
             return jsonify({"msg": "No se pudo crear el usuario en Auth", "error": r.json()}), 500
     except Exception as e:
