@@ -1,0 +1,78 @@
+/* ==========================================
+   ESTILOS PROPIOS - PROFESORES
+   ========================================== */
+
+/* Ajuste general de secciones */
+.tab-content {
+  animation: fadeIn var(--transition-normal);
+}
+
+/* Animación de aparición */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Formularios en secciones */
+#section-registrar .form-group,
+#section-eliminar .form-group {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Botones principales en formularios */
+#registerBtn,
+#deleteBtn {
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.5px;
+}
+
+/* Contenedor de tabla */
+#section-lista .table-responsive {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+/* Ajustes tabla de profesores */
+#profesoresTable tr td {
+  vertical-align: middle;
+}
+
+#profesoresTable tr:hover td {
+  background-color: var(--gray-50);
+  transition: var(--transition-fast);
+}
+
+/* Alertas dentro del módulo */
+#alert-container .alert {
+  margin: 0 auto var(--spacing-4);
+  max-width: 600px;
+}
+
+/* Footer */
+footer p {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.3px;
+}
+
+/* ==========================================
+   RESPONSIVE - PROFESORES
+   ========================================== */
+@media (max-width: 768px) {
+  #section-registrar .form-group,
+  #section-eliminar .form-group {
+    max-width: 100%;
+  }
+
+  .card-header h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  #profesoresTable td,
+  #profesoresTable th {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+}
