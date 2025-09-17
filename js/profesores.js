@@ -62,7 +62,7 @@ async function eliminarProfesor(event) {
   const matricula = document.getElementById("matriculaDel").value.trim();
 
   try {
-    const response = await fetch(`http://localhost:5004/profesores?matricula=${matricula}`, {
+    const response = await fetch(`http://localhost:5004/profesores?matriculaP=${matricula}`, {
       method: "DELETE",
     });
 
@@ -105,19 +105,33 @@ async function loadProfesores() {
     console.log("Respuesta de la API: ", response);
 
     if (response.ok) {
-      const profesores = await response.json();
+      let profesores = await response.json();
       console.log("Datos recibidos de la API: ", profesores);
 
-      if (Array.isArray(profesores) && profesores.length > 0) {
-        // Renderizar filas de la tabla
-        const rows = profesores.map(p => `
-          <tr>
-            <td>${p.nombreP}</td>
-            <td>${p.matriculaP}</td>
-          </tr>
-        `).join("");
+      // 🔧 Normalizar: si no es un array, convertir a array
+      if (!Array.isArray(profesores)) {
+        profesores = Object.values(profesores);
+      }
 
-        profesoresTable.innerHTML = rows;
+      if (profesores.length > 0) {
+        
+        profesoresTable.innerHTML = ""; // limpiar la tabla antes
+
+        profesores.forEach(p => {
+        const tr = document.createElement("tr");
+
+        const tdNombre = document.createElement("td");
+        tdNombre.textContent = p.nombreP;
+
+        const tdMatricula = document.createElement("td");
+        tdMatricula.textContent = p.matriculaP;
+
+        tr.appendChild(tdNombre);
+        tr.appendChild(tdMatricula);
+
+        profesoresTable.appendChild(tr);
+        });
+
         profesoresCount.textContent = `Total de profesores registrados: ${profesores.length}`;
       } else {
         profesoresTable.innerHTML = `
@@ -143,6 +157,7 @@ async function loadProfesores() {
     `;
   }
 }
+
 
 // ===============================
 // Inicialización
