@@ -9,7 +9,6 @@ CORS(app)
 # Conexión a Mongo (Servicios Escolares)
 client = MongoClient("mongodb+srv://dieguino:123@sito.xzf6zex.mongodb.net/?retryWrites=true&w=majority&appName=Sito")
 db = client["sito_servicios"]
-
 # URL del microservicio Auth
 AUTH_URL = "http://localhost:5002"  # cambia el puerto si tu Auth usa otro
 
@@ -96,5 +95,17 @@ def agregar_alumno_a_grupo(nombre_grupo):
     )
     return jsonify({"msg": f"Alumno {matricula} agregado al grupo {nombre_grupo}"}), 200
 
+# 📌 Listar profesores
+@app.route("/profesoresL", methods=["GET"])
+def listar_profesores():
+    try:
+        # Supongamos que tu microservicio de RH está corriendo en localhost:5005
+        res = requests.get("http://localhost:5005/profesoresL")
+        if res.status_code == 200:
+            return jsonify(res.json()), 200
+        else:
+            return jsonify({"error": "No se pudieron obtener los profesores"}), res.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 if __name__ == "__main__":
     app.run(port=5003, debug=True)

@@ -39,7 +39,17 @@
       <tbody id="alumnosTable"></tbody>
     </table>
   </div>
-
+<!-- Listado de Profesores -->
+<div class="listado">
+  <h2>Listado de Profesores</h2>
+  <button onclick="listarProfesores()">Actualizar lista</button>
+  <table>
+    <thead>
+      <tr><th>Nombre</th><th>Número de Empleado</th><th>Puesto</th></tr>
+    </thead>
+    <tbody id="profesoresTable"></tbody>
+  </table>
+</div>
   <!-- Formulario Registrar Grupo -->
   <form id="formGrupo">
     <h2>Registrar Grupo</h2>
@@ -75,6 +85,27 @@
   <script>
     const API_URL = "http://localhost:5003";
 
+     async function listarProfesores() {
+    try {
+      const res = await fetch("http://localhost:5005/profesoresL"); // ajusta el puerto y endpoint de tu microservicio de RH
+      const profesores = await res.json();
+      const tbody = document.getElementById('profesoresTable');
+      tbody.innerHTML = '';
+      profesores.forEach(p => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${p.nombre}</td>
+            <td>${p.num_empleado}</td>
+            <td>${p.puesto}</td>
+          </tr>`;
+      });
+    } catch(err) {
+      alert("Error al cargar profesores: " + err.message);
+    }
+  }
+
+  // Cargar listado de profesores al inicio
+  listarProfesores();
     // Registrar Alumno
     document.getElementById('formAlumno').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -112,7 +143,7 @@
           </tr>`;
       });
     }
-
+    
     // Registrar Grupo
     document.getElementById('formGrupo').addEventListener('submit', async (e) => {
       e.preventDefault();
