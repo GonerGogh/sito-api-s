@@ -88,25 +88,39 @@ def subir_calificacion(matricula):
     )
 
     return jsonify({"msg": f"Calificación registrada/actualizada para {matricula} en {grupo}"}), 200
+import requests
 
-# 📌 Cambiar contraseña (llama a Auth)
 @app.route("/alumnos/<matricula>/cambiar_contrasena", methods=["POST"])
 def cambiar_contrasena(matricula):
     data = request.json
     nueva = data.get("nueva_contrasena")
+    print("Datos recibidos en Alumnos:", data)
 
-    # Llamar microservicio Auth para cambiar contraseña
+    if not nueva:
+        return jsonify({"error": "Se requiere nueva_contrasena"}), 400
+
     try:
-        r = requests.post(f"{AUTH_URL}/cambiarContra", json={
-            "matricula": matricula,
-            "new_password": nueva
-        })
-        if r.status_code != 200:
-            return jsonify({"error": "No se pudo cambiar contraseña en Auth", "detalle": r.json()}), 500
-    except Exception as e:
-        return jsonify({"error": "Error comunicándose con Auth", "detalle": str(e)}), 500
+        r = requests.post(
+            f"{AUTH_URL}/cambiarContra",
+            json={                   # <-- así se pasa correctamente
+                "matricula": matricula,
+                "new_password": nueva
+            },
+            timeout=5
+        )
+        print("Payload enviado a Auth:", {"matricula": matricula, "new_password": nueva})
+        print("Respuesta de Auth:", r.text)
 
-    return jsonify({"msg": f"Contraseña cambiada para {matricula}"}), 200
+        # Reenvía la respuesta de Auth tal cual
+        try:
+            resp_json = r.json()
+        except ValueError:
+            resp_json = {"error": "Auth respondió sin JSON", "content": r.text}
+
+        return jsonify(resp_json), r.status_code
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": "Error comunicándose con Auth", "detalle": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(port=5004, debug=True)

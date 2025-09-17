@@ -72,6 +72,7 @@ def profile():
         return jsonify({"error": "Token expirado"}), 401
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
+    
 # Cambiar contraseña SIN pedir old_password
 @app.route("/cambiarContra", methods=["POST"])
 def change_password():
@@ -90,7 +91,7 @@ def change_password():
     # Actualizar con nueva contraseña
     hashed_new_pw = generate_password_hash(new_password)
     users.update_one(
-        {"matricula": matricula},
+        {"username": matricula},
         {"$set": {"password": hashed_new_pw}}
     )
 

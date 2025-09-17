@@ -33,7 +33,7 @@ async function registrarProfesor(event) {
   const matriculaP = document.getElementById("matricula").value.trim();
 
   try {
-    const response = await fetch("http://localhost:5004/profesoresR", {
+    const response = await fetch("http://localhost:5005/profesoresR", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nombreP, matriculaP }),
@@ -62,7 +62,7 @@ async function eliminarProfesor(event) {
   const matricula = document.getElementById("matriculaDel").value.trim();
 
   try {
-    const response = await fetch(`http://localhost:5004/profesores?matriculaP=${matricula}`, {
+    const response = await fetch(`http://localhost:5005/profesores?matriculaP=${matricula}`, {
       method: "DELETE",
     });
 
@@ -101,7 +101,7 @@ async function loadProfesores() {
   `;
 
   try {
-    const response = await fetch("http://localhost:5004/profesoresGet");
+    const response = await fetch("http://localhost:5005/profesoresGet");
     console.log("Respuesta de la API: ", response);
 
     if (response.ok) {
