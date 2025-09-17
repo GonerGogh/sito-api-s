@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Servicios Escolares</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h2 { color: #333; }
+    form, .listado { margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 6px;}
+    label { display:block; margin-top: 5px; }
+    input, select, button { margin-top: 5px; padding: 6px; width: 100%; }
+    table { width: 100%; border-collapse: collapse; margin-top:10px; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+    th { background-color: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h1>Servicios Escolares</h1>
+
+  <!-- Formulario Registrar Alumno -->
+  <form id="formAlumno">
+    <h2>Registrar Alumno</h2>
+    <label>Nombre</label>
+    <input type="text" name="nombre" required>
+    <label>Matrícula</label>
+    <input type="text" name="matricula" required>
+    <label>Carrera</label>
+    <input type="text" name="carrera" required>
+    <button type="submit">Registrar Alumno</button>
+  </form>
+
+  <!-- Listar Alumnos -->
+  <div class="listado">
+    <h2>Listado de Alumnos</h2>
+    <button onclick="listarAlumnos()">Actualizar lista</button>
+    <table>
+      <thead><tr><th>Nombre</th><th>Matrícula</th><th>Carrera</th></tr></thead>
+      <tbody id="alumnosTable"></tbody>
+    </table>
+  </div>
+
+  <!-- Formulario Registrar Grupo -->
+  <form id="formGrupo">
+    <h2>Registrar Grupo</h2>
+    <label>Nombre del Grupo</label>
+    <input type="text" name="nombre_grupo" required>
+    <label>Carrera</label>
+    <input type="text" name="carrera" required>
+    <label>Profesor Responsable</label>
+    <input type="text" name="profesor_responsable" required>
+    <button type="submit">Registrar Grupo</button>
+  </form>
+
+  <!-- Listar Grupos -->
+  <div class="listado">
+    <h2>Listado de Grupos</h2>
+    <button onclick="listarGrupos()">Actualizar lista</button>
+    <table>
+      <thead><tr><th>Grupo</th><th>Carrera</th><th>Profesor</th><th>Alumnos</th></tr></thead>
+      <tbody id="gruposTable"></tbody>
+    </table>
+  </div>
+
+  <!-- Agregar alumno a grupo -->
+  <form id="formAgregarAlumno">
+    <h2>Agregar Alumno a Grupo</h2>
+    <label>Nombre del Grupo</label>
+    <input type="text" name="nombre_grupo" required>
+    <label>Matrícula del Alumno</label>
+    <input type="text" name="matricula" required>
+    <button type="submit">Agregar Alumno</button>
+  </form>
+
+  <script>
+    const API_URL = "http://localhost:5003";
+
+    // Registrar Alumno
+    document.getElementById('formAlumno').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target));
+      const res = await fetch(`${API_URL}/alumnos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const msg = await res.json();
+      alert(msg.msg || msg.error);
+      listarAlumnos();
+      e.target.reset();
+    });
+
+    // Listar Alumnos
+    async function listarAlumnos() {
+      const res = await fetch(`${API_URL}/alumnos`);
+      const alumnos = await res.json();
+      const tbody = document.getElementById('alumnosTable');
+      tbody.innerHTML = '';
+      alumnos.forEach(al => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${al.nombre}</td>
+            <td>${al.matricula}</td>
+            <td>${al.carrera || ''}</td>
+          </tr>`;
+      });
+    }
+
+    // Registrar Grupo
+    document.getElementById('formGrupo').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target));
+      const res = await fetch(`${API_URL}/grupos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const msg = await res.json();
+      alert(msg.msg || msg.error);
+      listarGrupos();
+      e.target.reset();
+    });
+
+    // Listar Grupos
+    async function listarGrupos() {
+      const res = await fetch(`${API_URL}/grupos`);
+      const grupos = await res.json();
+      const tbody = document.getElementById('gruposTable');
+      tbody.innerHTML = '';
+      grupos.forEach(g => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${g.nombre_grupo}</td>
+            <td>${g.carrera}</td>
+            <td>${g.profesor_responsable}</td>
+            <td>${g.alumnos.join(', ')}</td>
+          </tr>`;
+      });
+    }
+
+    // Agregar Alumno a Grupo
+    document.getElementById('formAgregarAlumno').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target));
+      const res = await fetch(`${API_URL}/grupos/${data.nombre_grupo}/agregar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ matricula: data.matricula })
+      });
+      const msg = await res.json();
+      alert(msg.msg || msg.error);
+      listarGrupos();
+      e.target.reset();
+    });
+
+    // Cargar listas al inicio
+    listarAlumnos();
+    listarGrupos();
+  </script>
+</body>
+</html>
