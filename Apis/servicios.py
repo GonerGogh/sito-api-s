@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Conexión a Mongo (Servicios Escolares)
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient("mongodb+srv://dieguino:123@sito.xzf6zex.mongodb.net/?retryWrites=true&w=majority&appName=Sito")
 db = client["sito_servicios"]
 
 # URL del microservicio Auth
