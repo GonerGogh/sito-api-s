@@ -79,10 +79,17 @@
     document.getElementById('formAlumno').addEventListener('submit', async (e) => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(e.target));
+      const alumnoData = {
+      nombre: data.nombre,  // La matrícula como username
+      matricula: data.matricula,  // O default "12345"
+      carrera: data.carrera
+    };
+          console.log("Datos enviados a /alumnos:", alumnoData);
+
       const res = await fetch(`${API_URL}/alumnos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(alumnoData)
       });
       const msg = await res.json();
       alert(msg.msg || msg.error);

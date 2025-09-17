@@ -13,50 +13,55 @@ db = client["sito_servicios"]
 # URL del microservicio Auth
 AUTH_URL = "http://localhost:5002"  # cambia el puerto si tu Auth usa otro
 
-
-@app.route("/alumnos", methods=["POST"])
+# 📌 Registrar alumno
+@app.route("/alumnosR", methods=["POST"])
 def registrar_alumno():
     data = request.json
 
-    # Guardar en la colección alumnos
-    alumno = {
-        "nombre": data["nombre"],
-        "matricula": data["matricula"],
-        "carrera": data.get("carrera")
-    }
-    db.alumnos.insert_one(alumno)
-
-    # Crear usuario en Auth
+    # Crear usuario en Auth primero
     user_payload = {
         "username": data["matricula"],
-        "password": data["matricula"],  # puedes usar default "12345" y que después lo cambien
+        "password": data["matricula"],  # o default "12345"
         "role": "alumno"
     }
     try:
         r = requests.post(f"{AUTH_URL}/register", json=user_payload)
         if r.status_code != 201:
-            return jsonify({"msg": "Alumno creado pero fallo Auth", "error": r.json()}), 500
+            return jsonify({"msg": "No se pudo crear el usuario en Auth", "error": r.json()}), 500
     except Exception as e:
-        return jsonify({"msg": "Alumno creado pero no se pudo comunicar con Auth", "error": str(e)}), 500
+        return jsonify({"msg": "No se pudo comunicar con Auth", "error": str(e)}), 500
+
+    # Si Auth fue exitoso, guardar en la colección alumnos
+    try:
+        alumno = {
+            "nombre": data["nombre"],
+            "matricula": data["matricula"],
+            "carrera": data.get("carrera")
+        }
+        db.alumnos.insert_one(alumno)
+    except Exception as e:
+        # Rollback: eliminar usuario creado en Auth si falla MongoDB
+        requests.delete(f"{AUTH_URL}/users/{data['matricula']}")
+        return jsonify({"msg": "No se pudo registrar el alumno en DB", "error": str(e)}), 500
 
     return jsonify({"msg": "Alumno registrado con usuario en Auth"}), 201
 
 # 📌 Listar alumnos
-@app.route("/alumnos", methods=["GET"])
+@app.route("/alumnosL", methods=["GET"])
 def listar_alumnos():
-    result = list(alumnos.find({}, {"_id": 0}))
-    return jsonify(result)
+    alumnos = list(db.alumnos.find({}, {"_id": 0}))
+    return jsonify(alumnos), 200
 
 # 📌 Registrar grupo
-@app.route("/grupos", methods=["POST"])
+@app.route("/gruposR", methods=["POST"])
 def registrar_grupo():
     data = request.json
     nombre = data.get("nombre_grupo")
 
-    if grupos.find_one({"nombre_grupo": nombre}):
+    if db.grupos.find_one({"nombre_grupo": nombre}):
         return jsonify({"error": "Grupo ya existe"}), 400
 
-    grupos.insert_one({
+    db.grupos.insert_one({
         "nombre_grupo": data["nombre_grupo"],
         "carrera": data["carrera"],
         "profesor_responsable": data["profesor_responsable"],
@@ -65,10 +70,10 @@ def registrar_grupo():
     return jsonify({"msg": "Grupo registrado con éxito"}), 201
 
 # 📌 Listar grupos
-@app.route("/grupos", methods=["GET"])
+@app.route("/gruposL", methods=["GET"])
 def listar_grupos():
-    result = list(grupos.find({}, {"_id": 0}))
-    return jsonify(result)
+    grupos = list(db.grupos.find({}, {"_id": 0}))
+    return jsonify(grupos), 200
 
 # 📌 Agregar alumno a grupo
 @app.route("/grupos/<nombre_grupo>/agregar", methods=["POST"])
@@ -76,14 +81,14 @@ def agregar_alumno_a_grupo(nombre_grupo):
     data = request.json
     matricula = data.get("matricula")
 
-    grupo = grupos.find_one({"nombre_grupo": nombre_grupo})
+    grupo = db.grupos.find_one({"nombre_grupo": nombre_grupo})
     if not grupo:
         return jsonify({"error": "Grupo no encontrado"}), 404
 
     if matricula in grupo["alumnos"]:
         return jsonify({"error": "Alumno ya está en el grupo"}), 400
 
-    grupos.update_one(
+    db.grupos.update_one(
         {"nombre_grupo": nombre_grupo},
         {"$push": {"alumnos": matricula}}
     )

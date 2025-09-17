@@ -22,7 +22,7 @@ def register():
     data = request.json
     username = data.get("username")
     password = data.get("password")
-    role = data.get("role", "alumno")  # por default alumno
+    role = data.get("role") 
 
     if users.find_one({"username": username}):
         return jsonify({"error": "Usuario ya existe"}), 400
