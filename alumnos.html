@@ -35,59 +35,60 @@
 
 <script>
  async function initDashboard() {
-  const token = localStorage.getItem("token");
-  const matricula = localStorage.getItem("matricula");
+  const token = localStorage.getItem("token");
+  const matricula = localStorage.getItem("matricula");
 
-  if (!token || !matricula) {
-    window.location.href = "login.html";
-    return;
-  }
+  if (!token || !matricula) {
+    window.location.href = "login.html";
+    return;
+  }
 
-  document.getElementById("userName").innerText = matricula;
+  document.getElementById("userName").innerText = matricula;
+  const cont = document.getElementById("calificaciones");
+  cont.innerHTML = "Cargando...";
 
-  const cont = document.getElementById("calificaciones");
-  cont.innerHTML = "Cargando...";
+  try {
+    // Petición 1: Obtener la lista de grupos a los que pertenece el alumno
+    const resGrupos = await fetch(`http://localhost:5004/alumnos/${matricula}/grupo`);
+    const gruposAlumno = await resGrupos.json();
 
-  try {
-    // Petición 1: Obtener la lista de grupos a los que pertenece el alumno
-    const resGrupos = await fetch(`http://localhost:5004/alumnos/${matricula}/grupo`);
-    const gruposAlumno = await resGrupos.json();
+    // Petición 2: Obtener las calificaciones del alumno
+    const resCalificaciones = await fetch(`http://localhost:5004/alumnos/${matricula}/calificaciones`, {
+      headers: { "Authorization": token }
+    });
+    const dataCalificaciones = await resCalificaciones.json();
+    // 💡 Las calificaciones ahora son un objeto, no una lista
+    const calificacionesAlumno = dataCalificaciones.calificaciones || {};
 
-    // Petición 2: Obtener las calificaciones del alumno
-    const resCalificaciones = await fetch(`http://localhost:5004/alumnos/${matricula}/calificaciones`, {
-      headers: { "Authorization": token }
-    });
-    const dataCalificaciones = await resCalificaciones.json();
-    const calificacionesAlumno = dataCalificaciones.calificaciones || [];
+    if (resGrupos.status === 404) {
+      cont.innerHTML = "<p>No estás inscrito en ningún grupo.</p>";
+      return;
+    }
 
-    if (resGrupos.status === 404) {
-      cont.innerHTML = "<p>No estás inscrito en ningún grupo.</p>";
-      return;
-    }
-
-    let html = "<ul>";
-    gruposAlumno.forEach(grupo => {
-      const calificacionObj = calificacionesAlumno.find(c => c.grupo === grupo.nombre_grupo);
-      const calificacion = calificacionObj ? calificacionObj.calificacion : "N/A";
-      
-      // 💡 Línea corregida para mostrar el nombre y la matrícula del profesor
-      const profesorNombre = (grupo.profesor_responsable && grupo.profesor_responsable.nombre) ? grupo.profesor_responsable.nombre : 'Sin asignar';
+    let html = "<ul>";
+    gruposAlumno.forEach(grupo => {
+      // 💡 Se accede a la calificación directamente por el nombre del grupo
+      const calificacionObj = calificacionesAlumno[grupo.nombre_grupo];
+      const calificacion = calificacionObj ? calificacionObj.calificacion : "N/A";
+      
+      const profesorNombre = (grupo.profesor_responsable && grupo.profesor_responsable.nombre) ? grupo.profesor_responsable.nombre : 'Sin asignar';
       const profesorMatricula = (grupo.profesor_responsable && grupo.profesor_responsable.matricula) ? ` (${grupo.profesor_responsable.matricula})` : '';
 
-      html += `
-        <li>
-          Grupo: ${grupo.nombre_grupo} - 
-          Profesor: ${profesorNombre}${profesorMatricula} - 
-          Calificación: ${calificacion}
-        </li>
-      `;
-    });
-    html += "</ul>";
-    cont.innerHTML = html;
+      html += `
+        <li>
+          Grupo: ${grupo.nombre_grupo} - 
+          Profesor: ${profesorNombre}${profesorMatricula} - 
+          Calificación: ${calificacion}
+        </li>
+      `;
+    });
+    html += "</ul>";
+    cont.innerHTML = html;
 
-  } catch(err) {
-    document.getElementById("calificaciones").innerHTML = `<p>Error al obtener los datos. (${err.message})</p>`;
-  }
+  } catch(err) {
+    document.getElementById("calificaciones").innerHTML = `<p>Error al obtener los datos. (${err.message})</p>`;
+  }
+
 
   // Resto de la función para cambiar contraseña y cerrar sesión
   const passwordForm = document.getElementById("passwordForm");
