@@ -12,7 +12,7 @@ CORS(app)
 app.config["SECRET_KEY"] = "supersecreto"  # cámbialo por una env var
 
 # Conexión a Mongo
-client = MongoClient("mongodb+srv://admin:123@sito.xzf6zex.mongodb.net/?retryWrites=true&w=majority&appName=Sito")
+client = MongoClient("mongodb+srv://dieguino:123@sito.xzf6zex.mongodb.net/?retryWrites=true&w=majority&appName=Sito")
 db = client["sito_auth"]
 users = db["users"]
 

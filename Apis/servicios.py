@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Conexión a Mongo (Servicios Escolares)
-client = MongoClient("mongodb+srv://admin:123@sito.xzf6zex.mongodb.net/?retryWrites=true&w=majority&appName=Sito")
+client = MongoClient("mongodb+srv://dieguino:123@sito.xzf6zex.mongodb.net/?retryWrites=true&w=majority&appName=Sito")
 db = client["sito_servicios"]
 # URL del microservicio Auth
 AUTH_URL = "http://localhost:5002"  # cambia el puerto si tu Auth usa otro
@@ -147,7 +147,7 @@ def agregar_alumno_a_grupo(nombre_grupo):
 def listar_profesores():
     try:
         # Supongamos que tu microservicio de RH está corriendo en localhost:5005
-        res = requests.get("http://localhost:5005/profesoresL")
+        res = requests.get("http://localhost:5005/profesoresGet")
         if res.status_code == 200:
             return jsonify(res.json()), 200
         else:
