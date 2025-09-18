@@ -1,5 +1,5 @@
 // 🔹 Backend URLs
-const PROFESORES_URL = 'http://localhost:5005';
+const PROFESORES_URL = 'http://localhost:5006';
 const SERVICIOS_URL = 'http://localhost:5003';
 
 // Tomar datos del profesor desde localStorage
