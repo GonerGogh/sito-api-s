@@ -14,8 +14,7 @@ profesores = db["profesores"]
 
 # URL microservicio Alumnado
 ALUMNADO_URL = "http://localhost:5004"
-AUTH_URL = "http://localhost:5002"  # cambia el puerto si tu Auth usa otro
-
+AUTH_URL = "http://localhost:5001"
 # 📌 Listar profesores
 @app.route("/profesoresL", methods=["GET"])
 def listar_profesores():
@@ -86,4 +85,5 @@ def cambiar_contrasena(matriculaP):
         return jsonify({"error": "Error comunicándose con Auth", "detalle": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(port=5005, debug=True)
+    app.run(port=5006, debug=True)
+    ##pitosssssssssssssssssss
