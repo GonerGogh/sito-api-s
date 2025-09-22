@@ -1,85 +1,311 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
 }
 
-.container {
-    max-width: 600px;
-    margin: 40px auto;
+/* Header principal */
+.container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: linear-gradient(135deg, #1e88e5 0%, #26a69a 100%);
+    z-index: 1000;
+}
+
+.container::after {
+    content: 'PITO Portal de Información Táctico Operativo';
+    position: fixed;
+    top: 0;
+    left: 80px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    z-index: 1001;
+}
+
+/* Logo placeholder */
+.container h1 {
+    position: fixed;
+    top: 10px;
+    left: 15px;
+    width: 50px;
+    height: 50px;
     background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #26a69a;
+    font-weight: bold;
+    z-index: 1002;
+    margin: 0;
+    text-align: center;
+    line-height: 1;
 }
 
-h1, h2 {
-    text-align: center;
+/* Botón de usuario */
+.logout-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    padding-right: 20px;
+    z-index: 1001;
+}
+
+#btnCerrarSesion {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+#btnCerrarSesion:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.5);
+}
+
+/* Contenedor principal */
+.container {
+    margin-top: 70px;
+    display: flex;
+    min-height: calc(100vh - 70px);
+    background: white;
+}
+
+/* Navegación lateral */
+.nav-buttons {
+    width: 250px;
+    background: #f8f9fa;
+    border-right: 1px solid #e9ecef;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    min-height: calc(100vh - 70px);
+}
+
+.nav-buttons button {
+    width: 100%;
+    text-align: left;
+    padding: 15px 20px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #e9ecef;
+    color: #495057;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0;
+    border-radius: 0;
+}
+
+.nav-buttons button:hover {
+    background: #e9ecef;
+    color: #212529;
+}
+
+.nav-buttons button.active {
+    background: #26a69a;
+    color: white;
+    border-left: 4px solid #1e88e5;
+}
+
+/* Área de contenido */
+.seccion {
+    flex: 1;
+    padding: 30px;
+    margin: 0;
+    background: white;
+}
+
+.seccion h2 {
+    background: #26a69a;
+    color: white;
+    margin: -30px -30px 30px -30px;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: left;
+}
+
+/* Formularios y campos */
+.form-group {
+    margin-bottom: 20px;
 }
 
 label {
     display: block;
-    margin-top: 10px;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
 }
 
 input, select {
     width: 100%;
-    padding: 8px;
-    margin-top: 5px;
+    max-width: 400px;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    font-size: 14px;
+    background: white;
+    transition: border-color 0.3s ease;
+    margin-top: 0;
 }
 
-button {
-    margin-top: 15px;
-    padding: 10px 15px;
-    background-color: #007bff;
-    border: none;
+input:focus, select:focus {
+    outline: none;
+    border-color: #26a69a;
+    box-shadow: 0 0 0 2px rgba(38, 166, 154, 0.2);
+}
+
+/* Botones principales */
+#btnEnviar, #btnCambiar {
+    background: #26a69a;
     color: white;
+    border: none;
+    padding: 12px 24px;
     border-radius: 4px;
     cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-.nav-buttons {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.nav-buttons button {
-    margin: 0 10px;
-}
-
-.seccion {
+    font-size: 14px;
+    font-weight: 600;
     margin-top: 20px;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
+
+#btnEnviar:hover, #btnCambiar:hover {
+    background: #229e8f;
+}
+
+/* Mensajes */
+#mensaje, #mensajeContrasena {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Información del usuario (simulando datos del alumno) */
+.info-panel {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.info-panel h3 {
+    color: #495057;
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.info-row {
+    display: flex;
+    margin-bottom: 12px;
+    align-items: center;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #6c757d;
+    width: 150px;
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+.info-value {
+    color: #495057;
+    font-size: 14px;
+}
+
+/* Tablas mejoradas */
 .seccion table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 20px;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    overflow: hidden;
 }
-.seccion table, .seccion th, .seccion td {
-    border: 1px solid #ddd;
-}
-.seccion th, .seccion td {
-    padding: 8px;
-    text-align: left;
-}
+
 .seccion th {
-    background-color: #f2f2f2;
-}
-.logout-container {
-    text-align: right;
-    margin-bottom: 10px;
-}
-
-#btnCerrarSesion {
-    background-color: #dc3545;
+    background: #495057;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
 }
 
-#btnCerrarSesion:hover {
-    background-color: #b02a37;
+.seccion td {
+    padding: 12px;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 14px;
 }
 
+.seccion tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.seccion tr:hover {
+    background: #e3f2fd;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .nav-buttons {
+        width: 100%;
+        display: flex;
+        overflow-x: auto;
+        min-height: auto;
+    }
+    
+    .nav-buttons button {
+        white-space: nowrap;
+        border-right: 1px solid #e9ecef;
+        border-bottom: none;
+    }
+    
+    .seccion {
+        padding: 20px;
+    }
+    
+    .seccion h2 {
+        margin: -20px -20px 20px -20px;
+        padding: 15px 20px;
+    }
+    
+    input, select {
+        max-width: 100%;
+    }
+}
