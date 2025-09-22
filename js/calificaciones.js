@@ -14,6 +14,14 @@ if (!profesor.matricula || profesor.role !== 'profesor') {
     window.location.href = 'login.html';
 }
 
+// Mostrar matrícula del profesor en la interfaz
+document.addEventListener('DOMContentLoaded', () => {
+    const profesorMatriculaEl = document.getElementById('profesorMatricula');
+    if (profesorMatriculaEl) {
+        profesorMatriculaEl.textContent = profesor.matricula;
+    }
+});
+
 // Botones de navegación
 const btnCalificacionesNav = document.getElementById('btnCalificaciones');
 const btnContrasenaNav = document.getElementById('btnCambiarContrasena');
@@ -24,11 +32,19 @@ const seccionContrasena = document.getElementById('seccionContrasena');
 btnCalificacionesNav.addEventListener('click', () => {
     seccionCalificaciones.style.display = 'block';
     seccionContrasena.style.display = 'none';
+    
+    // Manejar clases activas
+    btnCalificacionesNav.classList.add('active');
+    btnContrasenaNav.classList.remove('active');
 });
 
 btnContrasenaNav.addEventListener('click', () => {
     seccionCalificaciones.style.display = 'none';
     seccionContrasena.style.display = 'block';
+    
+    // Manejar clases activas
+    btnContrasenaNav.classList.add('active');
+    btnCalificacionesNav.classList.remove('active');
 });
 
 // ------------------- Calificaciones -------------------
@@ -43,6 +59,12 @@ async function cargarGrupos() {
         const res = await fetch(`${PROFESORES_URL}/profesoresL`);
         const profesores = await res.json();
         const profData = profesores.find(p => p.matriculaP === profesor.matricula);
+        const profName = profData ? profData.nombreP : 'Profesor';
+
+        const profesorNombreEl = document.getElementById('profesorNombre');
+        if (profesorNombreEl) {
+            profesorNombreEl.textContent = profName;
+        }
 
         if (!profData) return alert("Profesor no encontrado");
 
@@ -66,7 +88,7 @@ async function cargarAlumnos(grupo) {
     try {
         const res = await fetch(`${SERVICIOS_URL}/gruposL`);
         const grupos = await res.json();
-        const grupoFiltrado = grupos.find(g => g.nombre_grupo === grupo && g.profesor_responsable === profesor.matricula);
+        const grupoFiltrado = grupos.find(g => g.nombre_grupo === grupo && g.profesor_responsable.matricula === profesor.matricula);
 
         if (!grupoFiltrado || !grupoFiltrado.alumnos.length) {
             alumnoSelect.innerHTML = '<option value="">No hay alumnos asignados</option>';

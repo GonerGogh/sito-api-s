@@ -4,47 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal de Profesores</title>
+    <link rel="shortcut icon" href="resources/favicon.ico">
     <link rel="stylesheet" href="css/calificaciones.css">
 </head>
 <body>
     <div class="container">
-        <h1>Portal de Profesores</h1>
+        <h1>UTL</h1>
         <div class="logout-container">
-            <button id="btnCerrarSesion">Cerrar Sesión</button>
+            <button id="btnCerrarSesion">CERRAR SESIÓN ▼</button>
         </div>
 
-        <!-- Botones de navegación interna -->
+        <!-- Navegación lateral -->
         <div class="nav-buttons">
-            <button id="btnCalificaciones">Poner Calificaciones</button>
-            <button id="btnCambiarContrasena">Cambiar Contraseña</button>
+            <button id="btnCalificaciones" class="active">📊 Poner Calificaciones</button>
+            <button id="btnCambiarContrasena">🔒 Cambiar Contraseña</button>
         </div>
 
-        <!-- Sección de calificaciones -->
-        <div id="seccionCalificaciones" class="seccion">
-            <h2>Calificaciones</h2>
-            <label for="grupoSelect">Grupo:</label>
-            <select id="grupoSelect"></select>
+        <!-- Área de contenido -->
+        <div class="content-area">
+            <!-- Sección de calificaciones -->
+            <div id="seccionCalificaciones" class="seccion">
+                <h2>Historial de Calificaciones</h2>
+                
+                <div class="info-panel">
+                    <h3>Datos del Profesor</h3>
+                    <div class="info-row">
+                        <span class="info-label">Matrícula:</span>
+                        <span class="info-value" id="profesorMatricula">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Nombre:</span>
+                        <span class="info-value" id="profesorNombre">-</span>
+                    </div>
+                </div>
 
-            <label for="alumnoSelect">Alumno:</label>
-            <select id="alumnoSelect"></select>
+                <div class="form-group">
+                    <label for="grupoSelect">Grupo:</label>
+                    <select id="grupoSelect"></select>
+                </div>
 
-            <label for="calificacionInput">Calificación:</label>
-            <input type="number" id="calificacionInput" min="0" max="100">
+                <div class="form-group">
+                    <label for="alumnoSelect">Alumno:</label>
+                    <select id="alumnoSelect"></select>
+                </div>
 
-            <button id="btnEnviar">Enviar Calificación</button>
+                <div class="form-group">
+                    <label for="calificacionInput">Calificación:</label>
+                    <input type="number" id="calificacionInput" min="0" max="100" placeholder="Ingrese calificación (0-100)">
+                </div>
 
-            <div id="mensaje"></div>
-        </div>
+                <button id="btnEnviar">Enviar Calificación</button>
 
-        <!-- Sección de cambio de contraseña -->
-        <div id="seccionContrasena" class="seccion" style="display:none;">
-            <h2>Cambiar Contraseña</h2>
-            <label for="nuevaContrasena">Nueva Contraseña:</label>
-            <input type="password" id="nuevaContrasena">
+                <div id="mensaje"></div>
+            </div>
 
-            <button id="btnCambiar">Cambiar Contraseña</button>
+            <!-- Sección de cambio de contraseña -->
+            <div id="seccionContrasena" class="seccion" style="display:none;">
+                <h2>Cambiar Contraseña</h2>
+                
+                <div class="info-panel">
+                    <h3>Configuración de Seguridad</h3>
+                    <p>Modifique su contraseña para mantener la seguridad de su cuenta.</p>
+                </div>
 
-            <div id="mensajeContrasena"></div>
+                <div class="form-group">
+                    <label for="nuevaContrasena">Nueva Contraseña:</label>
+                    <input type="password" id="nuevaContrasena" placeholder="Ingrese nueva contraseña">
+                </div>
+
+                <button id="btnCambiar">Cambiar Contraseña</button>
+
+                <div id="mensajeContrasena"></div>
+            </div>
         </div>
     </div>
 

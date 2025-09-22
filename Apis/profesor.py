@@ -8,15 +8,17 @@ app = Flask(__name__)
 CORS(app)
 
 # Conexión a Mongo (Profesores)
-
-client = MongoClient("mongodb+srv://dieguino:123@sito.xzf6zex.mongodb.net/?retryWrites=true&w=majority&appName=Sito")
-
+<<<<<<< HEAD
+client = MongoClient("mongodb+srv://admin:123@sito.xzf6zex.mongodb.net/?retryWrites=true&w=majority&appName=Sito")
+=======
+client = MongoClient("mongodb+srv://gonergogh:123@sito.xzf6zex.mongodb.net/?retryWrites=true&w=majority&appName=Sito")
+>>>>>>> 010dc8467da41108fbfd9cdc3282a3ce7b48fc79
 db = client["sito_profesores"]
 profesores = db["profesores"]
 
 # URL microservicio Alumnado
 ALUMNADO_URL = "http://localhost:5004"
-AUTH_URL = "http://localhost:5001"
+AUTH_URL = "http://localhost:5002"
 # 📌 Listar profesores
 @app.route("/profesoresL", methods=["GET"])
 def listar_profesores():
