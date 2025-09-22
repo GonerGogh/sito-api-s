@@ -25,7 +25,7 @@
                 } else if (data.role === "profesor") {
                     window.location.href = "profesor.html";
                 } else if (data.role === "rh") {
-                    window.location.href = "rh.html";
+                    window.location.href = "profesores.html";
                 } else if (data.role === "servicios") {
                     window.location.href = "servicios.html";
                 }

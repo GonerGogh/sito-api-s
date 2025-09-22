@@ -7,10 +7,10 @@ app = Flask(__name__)
 CORS(app)
 
 # Conexión a Mongo (Servicios Escolares)
-client = MongoClient("mongodb+srv://admin:123@sito.xzf6zex.mongodb.net/?retryWrites=true&w=majority&appName=Sito")
+client = MongoClient("mongodb+srv://dieguino:123@sito.xzf6zex.mongodb.net/?retryWrites=true&w=majority&appName=Sito")
 db = client["sito_servicios"]
 # URL del microservicio Auth
-AUTH_URL = "http://localhost:5002"  # cambia el puerto si tu Auth usa otro
+AUTH_URL = "http://localhost:5002"
 
 # 📌 Registrar alumno
 @app.route("/alumnosR", methods=["POST"])
@@ -154,6 +154,49 @@ def listar_profesores():
             return jsonify({"error": "No se pudieron obtener los profesores"}), res.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# 📌 Actualizar alumno
+@app.route("/alumnosU/<matricula>", methods=["PUT"])
+def actualizar_alumno(matricula):
+    data = request.json
+    print(data, matricula)
+    alumno = db.alumnos.find_one({"matricula": matricula})
+    if not alumno:
+        return jsonify({"error": "Alumno no encontrado"}), 404
+
+    # --- Actualizar en Mongo ---
+    update_data = {}
+    if "nombre" in data:
+        update_data["nombre"] = data["nombre"]
+    if "carrera" in data:
+        update_data["carrera"] = data["carrera"]
+
+    if update_data:
+        db.alumnos.update_one({"matricula": matricula}, {"$set": update_data})
+
+    # --- Actualizar contraseña en Auth (si viene en payload) ---
+    if "password" in data and data["password"].strip() != "":
+        try:
+            r = requests.post(
+            f"{AUTH_URL}/cambiarContra",
+            json={                   # <-- así se pasa correctamente
+                "matricula": matricula,
+                "new_password": data["password"]
+            },
+            timeout=5
+        )
+            if r.status_code != 200:
+                return jsonify({
+                    "msg": "Datos de alumno actualizados, pero error al cambiar contraseña en Auth",
+                    "detalle": r.json()
+                }), 207
+        except Exception as e:
+            return jsonify({
+                "msg": "Datos de alumno actualizados, pero fallo al conectar con Auth",
+                "detalle": str(e)
+            }), 207
+
+    return jsonify({"msg": "Alumno actualizado correctamente"}), 200
 
 if __name__ == "__main__":
     app.run(port=5003, debug=True)

@@ -174,6 +174,7 @@
     <li><a href="#" class="tab-link active" data-tab="alumnosTab">Alumnos</a></li>
     <li><a href="#" class="tab-link" data-tab="profesoresTab">Profesores</a></li>
     <li><a href="#" class="tab-link" data-tab="gruposTab">Grupos</a></li>
+    <li><a href="#" id="logoutBtn">Cerrar sesión</a></li>
   </ul>
 </div>
 
@@ -189,9 +190,44 @@
         <label>Matrícula</label>
         <input type="text" name="matricula" required>
         <label>Carrera</label>
-        <input type="text" name="carrera" required>
+        <select name="carrera" required>
+      <option value="">-- Selecciona una carrera --</option>
+      <option value="Informática">Informática</option>
+      <option value="Sistemas">Sistemas</option>
+      <option value="Electrónica">Electrónica</option>
+      <option value="Mecatrónica">Mecatrónica</option>
+      <option value="Administración">Administración</option>
+    </select>
         <button type="submit">Registrar Alumno</button>
       </form>
+
+      <!-- Formulario Modificar Alumno -->
+<form id="formEditarAlumno">
+  <h2>Editar Alumno</h2>
+
+  <label>Matrícula</label>
+  <select name="matricula" id="selectMatricula" required>
+    <option value="">-- Selecciona un alumno --</option>
+  </select>
+
+  <label>Nombre</label>
+  <input type="text" name="nombre" id="editNombre">
+
+  <label>Carrera</label>
+  <select name="carrera" id="editCarrera" required>
+      <option value="">-- Selecciona una carrera --</option>
+      <option value="Informática">Informática</option>
+      <option value="Sistemas">Sistemas</option>
+      <option value="Electrónica">Electrónica</option>
+      <option value="Mecatrónica">Mecatrónica</option>
+      <option value="Administración">Administración</option>
+    </select>
+
+  <label>Nueva Contraseña</label>
+  <input type="password" name="password" id="editPassword">
+
+  <button type="submit">Actualizar Alumno</button>
+</form>
 
       <!-- Listar Alumnos -->
       <div class="listado">
@@ -214,7 +250,7 @@
         <div class="table-container">
           <table>
             <thead>
-              <tr><th>Nombre</th><th>Número de Empleado</th><th>Puesto</th></tr>
+              <tr><th>Nombre</th><th>Número de Empleado</th></tr>
             </thead>
             <tbody id="profesoresTable"></tbody>
           </table>
@@ -230,10 +266,18 @@
         <label>Nombre del Grupo</label>
         <input type="text" name="nombre_grupo" required>
         <label>Carrera</label>
-        <input type="text" name="carrera" required>
+          <select name="carrera" required>
+        <option value="">-- Selecciona una carrera --</option>
+      <option value="Informática">Informática</option>
+      <option value="Sistemas">Sistemas</option>
+      <option value="Electrónica">Electrónica</option>
+      <option value="Mecatrónica">Mecatrónica</option>
+      <option value="Administración">Administración</option>
+    </select>
         <label>Profesor Responsable</label>
-        <input type="text" name="profesor_responsable" required>
-        <button type="submit">Registrar Grupo</button>
+<select name="profesor_responsable" id="selectProfesor" required>
+  <option value="">-- Selecciona un profesor --</option>
+</select>        <button type="submit">Registrar Grupo</button>
       </form>
 
       <!-- Listar Grupos -->
@@ -252,13 +296,18 @@
       <form id="formAgregarAlumno">
         <h2>Agregar Alumno a Grupo</h2>
         <label>Nombre del Grupo</label>
-        <input type="text" name="nombre_grupo" required>
-        <label>Matrícula del Alumno</label>
-        <input type="text" name="matricula" required>
-        <button type="submit">Agregar Alumno</button>
-      </form>
-    </div>
-  </div>
+    <select name="nombre_grupo" id="selectGrupoAgregar" required>
+      <option value="">-- Selecciona un grupo --</option>
+    </select>
+
+    <label>Matrícula del Alumno</label>
+    <select name="matricula" id="selectAlumnoAgregar" required>
+      <option value="">-- Selecciona un alumno --</option>
+    </select>
+
+    <button type="submit">Agregar Alumno</button>
+  </form>
+</div>
 
   <script>
     /* --- Control Tabs --- */
@@ -277,6 +326,18 @@
 
     /* --- Tu JS actual --- */
     const API_URL = "http://localhost:5003";
+// --- Validar sesión al cargar ---
+const token = localStorage.getItem("token");
+const matricula = localStorage.getItem("matricula");
+if (!token || !matricula) {
+  window.location.href = "login.html";
+}
+
+// --- Botón de cerrar sesión ---
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localStorage.clear();
+  window.location.href = "login.html";
+});
 
     async function listarProfesores() {
       try {
@@ -297,6 +358,27 @@
       }
     }
     listarProfesores();
+    async function cargarSelectProfesores() {
+  try {
+    const res = await fetch("http://localhost:5005/profesoresGet");
+    const profesores = await res.json();
+
+    const select = document.getElementById("selectProfesor");
+    select.innerHTML = '<option value="">-- Selecciona un profesor --</option>';
+
+    profesores.forEach(p => {
+      const option = document.createElement("option");
+      option.value = p.matriculaP; // valor que se enviará al backend
+      option.textContent = `${p.nombreP} (${p.matriculaP})`;
+      select.appendChild(option);
+    });
+  } catch(err) {
+    console.error("Error al cargar select de profesores:", err);
+  }
+}
+
+// Ejecutar al inicio
+cargarSelectProfesores();
 
     document.getElementById('formAlumno').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -367,6 +449,27 @@
             </tr>`;
       });
     }
+    
+// --- Cargar grupos en select para agregar alumno ---
+async function cargarSelectGruposAgregar() {
+  try {
+    const res = await fetch(`${API_URL}/gruposL`);
+    const grupos = await res.json();
+
+    const select = document.getElementById("selectGrupoAgregar");
+    select.innerHTML = '<option value="">-- Selecciona un grupo --</option>';
+
+    grupos.forEach(g => {
+      const option = document.createElement("option");
+      option.value = g.nombre_grupo;
+      option.textContent = g.nombre_grupo;
+      select.appendChild(option);
+    });
+  } catch(err) {
+    console.error("Error al cargar select de grupos:", err);
+  }
+}
+cargarSelectGruposAgregar();
 
     document.getElementById('formAgregarAlumno').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -381,6 +484,82 @@
       listarGrupos();
       e.target.reset();
     });
+    let alumnosCache = [];
+
+// Cargar alumnos en el selector
+async function cargarSelectAlumnos() {
+  const res = await fetch(`${API_URL}/alumnosL`);
+  alumnosCache = await res.json();
+
+  const select = document.getElementById("selectMatricula");
+  select.innerHTML = '<option value="">-- Selecciona un alumno --</option>';
+
+  alumnosCache.forEach(al => {
+    const option = document.createElement("option");
+    option.value = al.matricula;
+    option.textContent = `${al.matricula}`;
+    select.appendChild(option);
+  });
+}
+
+// --- Cargar alumnos en select para agregar ---
+async function cargarSelectAlumnosAgregar() {
+  try {
+    const res = await fetch(`${API_URL}/alumnosL`);
+    const alumnos = await res.json();
+
+    const select = document.getElementById("selectAlumnoAgregar");
+    select.innerHTML = '<option value="">-- Selecciona un alumno --</option>';
+
+    alumnos.forEach(al => {
+      const option = document.createElement("option");
+      option.value = al.matricula;
+      option.textContent = `${al.nombre} (${al.matricula})`;
+      select.appendChild(option);
+    });
+  } catch(err) {
+    console.error("Error al cargar select de alumnos:", err);
+  }
+}
+cargarSelectAlumnosAgregar();
+// Cuando se seleccione un alumno → autorellenar
+document.getElementById("selectMatricula").addEventListener("change", (e) => {
+  const matricula = e.target.value;
+  const alumno = alumnosCache.find(a => a.matricula === matricula);
+
+  if (alumno) {
+    document.getElementById("editNombre").value = alumno.nombre || "";
+    document.getElementById("editCarrera").value = alumno.carrera || "";
+  } else {
+    document.getElementById("editNombre").value = "";
+    document.getElementById("editCarrera").value = "";
+  }
+
+  document.getElementById("editPassword").value = ""; // siempre vacío
+});
+
+// Enviar actualización
+document.getElementById('formEditarAlumno').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target));
+  const matricula = data.matricula;
+
+  const res = await fetch(`${API_URL}/alumnosU/${matricula}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+
+  const msg = await res.json();
+  alert(msg.msg || msg.error);
+  listarAlumnos();
+  cargarSelectAlumnos(); // refrescar selector
+  e.target.reset();
+});
+
+// Cargar datos al inicio
+cargarSelectAlumnos();
+
 
     listarAlumnos();
     listarGrupos();

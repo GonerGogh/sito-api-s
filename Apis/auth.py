@@ -12,7 +12,7 @@ CORS(app)
 app.config["SECRET_KEY"] = "supersecreto"  # cámbialo por una env var
 
 # Conexión a Mongo
-client = MongoClient("mongodb+srv://admin:123@sito.xzf6zex.mongodb.net/?retryWrites=true&w=majority&appName=Sito")
+client = MongoClient("mongodb+srv://dieguino:123@sito.xzf6zex.mongodb.net/?retryWrites=true&w=majority&appName=Sito")
 db = client["sito_auth"]
 users = db["users"]
 
@@ -108,21 +108,6 @@ def delete_user(username):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-
-@app.route("/cambiar_contrasena", methods=["POST"])
-def cambiar_contrasena():
-    data = request.json
-    username = data.get("username")
-    new_password = data.get("new_password")
-
-    user = users.find_one({"username": username})
-    if not user:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-
-    hashed_pw = generate_password_hash(new_password)
-    users.update_one({"username": username}, {"$set": {"password": hashed_pw}})
-
-    return jsonify({"msg": "Contraseña actualizada"}), 200
 
 if __name__ == "__main__":
     app.run(port=5002, debug=True)
